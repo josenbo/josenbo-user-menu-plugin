@@ -1,18 +1,33 @@
 <?php
 /**
-* Plugin Name:    Josenbo User Menu
-* Plugin URI:     https://github.com/josenbo/josenbo-user-menu-plugin
-* Description:    Provides menu widgets for user access and user profile actions. This is a customized version of WPBrigade's Login Logout Menue plugin (see https://wpbrigade.com/wordpress/plugins/loginpress/)
-* Version:        1.0.0
-* Author:         Jochen Stein
-* Author URI:     https://github.com/josenbo/
-* Text Domain:    josenbo-user-menu
-* Domain Path:    /languages
-*
-* @package josenboxum
-* @category Core
-* @author josenbo
-**/
+ * The plugin bootstrap file
+ *
+ * This file is read by WordPress to generate the plugin information in the plugin
+ * admin area. This file also includes all of the dependencies used by the plugin,
+ * registers the activation and deactivation functions, and defines a function
+ * that starts the plugin.
+ *
+ * @link       https://bitbucket.org/sarkonet/wordpress-plugin-login-shortcode/
+ * @since      1.0.0
+ * @package    jsnusermenu
+ * @author     josenbo
+ *
+ * @wordpress-plugin
+ * Plugin Name:    Josenbo User Menu
+ * Plugin URI:     https://github.com/josenbo/josenbo-user-menu-plugin
+ * Description:    Provides menu widgets for user access and user profile actions. This is a customized version of WPBrigade's Login Logout Menue plugin (see https://wpbrigade.com/wordpress/plugins/loginpress/)
+ * Version:        1.0.0
+ * Author:         Jochen Stein
+ * Author URI:     https://github.com/josenbo/
+ * Text Domain:    josenbo-user-menu
+ * Domain Path:    /languages
+ *
+ */
+
+// If this file is called directly, abort.
+if ( ! defined( 'WPINC' ) ) {
+  die;
+}
 
 if ( !class_exists( 'Josenbo_User_Menu' ) ) :
 
@@ -106,11 +121,11 @@ if ( !class_exists( 'Josenbo_User_Menu' ) ) :
       global $nav_menu_selected_id;
 
       $elems = array(
-        '#josenboxum-login#'        => __( 'Log In',   'josenbo-user-menu' ),
-        '#josenboxum-logout#'       => __( 'Log Out',  'josenbo-user-menu' ),
-        '#josenboxum-loginlogout#'  => __( 'Log In',   'josenbo-user-menu' ) . ' | ' . __( 'Log Out', 'josenbo-user-menu' ),
-        '#josenboxum-register#'     => __( 'Register', 'josenbo-user-menu' ),
-        '#josenboxum-profile#'      => __( 'Profile',  'josenbo-user-menu' )
+        '#jsnusermenu-login#'        => __( 'Log In',   'josenbo-user-menu' ),
+        '#jsnusermenu-logout#'       => __( 'Log Out',  'josenbo-user-menu' ),
+        '#jsnusermenu-loginlogout#'  => __( 'Log In',   'josenbo-user-menu' ) . ' | ' . __( 'Log Out', 'josenbo-user-menu' ),
+        '#jsnusermenu-register#'     => __( 'Register', 'josenbo-user-menu' ),
+        '#jsnusermenu-profile#'      => __( 'Profile',  'josenbo-user-menu' )
       );
       $logitems = array(
         'db_id' => 0,
@@ -146,16 +161,6 @@ if ( !class_exists( 'Josenbo_User_Menu' ) ) :
 
         <p class="button-controls">
           <span class="list-controls hide-if-no-js">
-            <a href="javascript:void(0);" class="help" onclick="jQuery( '#josenbo-user-menu-help' ).toggle();"><?php _e( 'Help', 'josenbo-user-menu' ); ?></a>
-            <span class="hide-if-js" id="josenbo-user-menu-help"><br /><a name="josenbo-user-menu-help"></a>
-              <?php
-              echo '&#9725;' . esc_html__( 'To redirect user after login/logout/register just add a relative link after the link\'s keyword, example :', 'josenbo-user-menu' ) . ' <br /><code>#josenboxum-loginlogout#index.php</code>.';
-              echo '<br /><br />&#9725;' . esc_html__( 'You can also use', 'josenbo-user-menu' ) . ' <code>%current-page%</code> ' . esc_html__( 'to redirect the user on the current visited page after login/logout/register, example :', 'josenbo-user-menu' ) . ' <code>#josenboxum-loginlogout#%current-page%</code>.<br /><br />';
-              echo sprintf( __( 'To get plugin support contact us on <a href="%1$s" target="_blank">plugin support forum</a> or <a href="%2$s" target="_blank">contact us page</a>.', 'josenbo-user-menu'), 'https://wpbrigade.com/wordpress/plugins/josenbo-user-menu/', 'https://wpbrigade.com/contact/' ) . '<br /><br />';
-                ?>
-              </span>
-            </span>
-
             <span class="add-to-menu">
               <input type="submit"<?php disabled( $nav_menu_selected_id, 0 ); ?> class="button-secondary submit-add-to-menu right" value="<?php esc_attr_e( 'Add to Menu', 'josenbo-user-menu' ); ?>" name="add-josenbo-umlinks-menu-item" id="submit-josenbo-umlinks" />
               <span class="spinner"></span>
@@ -172,9 +177,9 @@ if ( !class_exists( 'Josenbo_User_Menu' ) ) :
         $titles = explode( '|', $title );
 
         if ( ! is_user_logged_in() ) {
-          return esc_html( isset( $titles[0] ) ? $titles[0] : $title );
+          return '<i class="far fa-user-circle"></i>';
         } else {
-          return esc_html( isset( $titles[1] ) ? $titles[1] : $title );
+          return '<i class="fas fa-user-circle"></i>';
         }
       }
 
@@ -182,78 +187,66 @@ if ( !class_exists( 'Josenbo_User_Menu' ) ) :
 
         global $pagenow;
 
-        if ( $pagenow != 'nav-menus.php' && ! defined( 'DOING_AJAX' ) && isset( $item->url ) && strstr( $item->url, '#josenboxum' ) != '' ) {
+        if ( $pagenow != 'nav-menus.php' && ! defined( 'DOING_AJAX' ) && isset( $item->url ) && strstr( $item->url, '#jsnusermenu' ) != '' ) {
 
           $item_url = substr( $item->url, 0, strpos( $item->url, '#', 1 ) ) . '#';
-          $item_redirect = str_replace( $item_url, '', $item->url );
-
-          if ( $item_redirect == '%current-page%' ) {
-            $item_redirect = $_SERVER['REQUEST_URI'];
-          }
 
           switch ( $item_url ) {
-            case '#josenboxum-loginlogout#' :
+            case '#jsnusermenu-loginlogout#' :
 
-            $item_redirect = explode( '|', $item_redirect );
+              if ( is_user_logged_in() ) {
 
-            if ( count( $item_redirect ) != 2 ) {
-              $item_redirect[1] = $item_redirect[0];
-            }
+                $item->url = wp_logout_url( get_home_url() );
+              } else {
+                $item->url = wp_login_url( $_SERVER['REQUEST_URI'] );
+              }
 
-            if ( is_user_logged_in() ) {
+              $item->title = $this->josenbo_user_setup_title( $item->title ) ;
+              break;
 
-              $item->url = wp_logout_url( $item_redirect[1] );
-            } else {
+            case '#jsnusermenu-login#' :
 
-              $item->url = wp_login_url( $item_redirect[0] );
-            }
+              if ( is_user_logged_in() ) {
+                return $item;
+              }
 
-            $item->title = $this->josenbo_user_setup_title( $item->title ) ;
-            break;
+              $item->url = wp_login_url( $_SERVER['REQUEST_URI'] );
+              break;
 
-            case '#josenboxum-login#' :
+            case '#jsnusermenu-logout#' :
+              if ( ! is_user_logged_in() ) {
+                return $item;
+              }
+              
+              $item->url = wp_logout_url( get_home_url() );
+              break;
 
-            if ( is_user_logged_in() ) {
-              return $item;
-            }
+            case '#jsnusermenu-register#' :
 
-            $item->url = wp_login_url( $item_redirect );
-            break;
+              if ( is_user_logged_in() ) {
+                return $item;
+              }
 
-            case '#josenboxum-logout#' :
-            if ( ! is_user_logged_in() ) {
-              return $item;
-            }
+              $item->url = wp_registration_url();
+              break;
 
-            $item->url = wp_logout_url( $item_redirect );
-            break;
+            case '#jsnusermenu-profile#' :
+              if ( ! is_user_logged_in() ) {
+                return $item;
+              }
 
-            case '#josenboxum-register#' :
+              if ( function_exists('bp_core_get_user_domain') ) {
+                $url = bp_core_get_user_domain( get_current_user_id() );
+              } else if ( function_exists('bbp_get_user_profile_url') ) {
+                $url = bbp_get_user_profile_url( get_current_user_id() );
+              } else if ( class_exists( 'WooCommerce' ) ) {
+                $url = get_permalink( get_option('woocommerce_myaccount_page_id') );
+              } else {
+                $url = get_edit_user_link();
+              }
 
-            if ( is_user_logged_in() ) {
-              return $item;
-            }
-
-            $item->url = wp_registration_url();
-            break;
-
-            case '#josenboxum-profile#' :
-            if ( ! is_user_logged_in() ) {
-              return $item;
-            }
-
-            if ( function_exists('bp_core_get_user_domain') ) {
-              $url = bp_core_get_user_domain( get_current_user_id() );
-            } else if ( function_exists('bbp_get_user_profile_url') ) {
-              $url = bbp_get_user_profile_url( get_current_user_id() );
-            } else if ( class_exists( 'WooCommerce' ) ) {
-              $url = get_permalink( get_option('woocommerce_myaccount_page_id') );
-            } else {
-              $url = get_edit_user_link();
-            }
-
-            $item->url = esc_url( $url );
-            break;
+              $item->url = esc_url( $url );
+              break;
           }
           $item->url = esc_url( $item->url );
         }
@@ -264,7 +257,7 @@ if ( !class_exists( 'Josenbo_User_Menu' ) ) :
       function josenbo_user_menu_objects( $sorted_menu_items ) {
 
         foreach ( $sorted_menu_items as $menu => $item ) {
-          if ( strstr( $item->url, '#josenboxum' ) != '' ) {
+          if ( strstr( $item->url, '#jsnusermenu' ) != '' ) {
             unset( $sorted_menu_items[ $menu ] );
           }
         }
